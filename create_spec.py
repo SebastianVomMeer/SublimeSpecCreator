@@ -27,14 +27,10 @@ class CreateSpecCommand(sublime_plugin.TextCommand):
 class SpecAppenderFactory:
     
     def for_method_name_and_file_name(self, method_name, file_path):
-        if "/app/controllers/" in file_path:
-            return self.for_appender_type(ControllerSpecAppender, method_name, file_path)
-        elif "/app/models/" in file_path:
-            return self.for_appender_type(ModelSpecAppender, method_name, file_path)
-        elif "/app/lib/" in file_path:
-            return self.for_appender_type(LibSpecAppender, method_name, file_path)
-        else:
-            return None
+        for appender_type in [ControllerSpecAppender, ModelSpecAppender, LibSpecAppender, MailerSpecAppender]:
+            if "/app/" + appender_type.component_dir + "/" in file_path:
+                return self.for_appender_type(appender_type, method_name, file_path)
+        return None 
 
     def for_appender_type(self, appender_type, method_name, file_path):
         component_dir = appender_type.component_dir
@@ -95,6 +91,10 @@ class ModelSpecAppender(AbstractSpecAppender):
 
 class LibSpecAppender(AbstractSpecAppender):
     component_dir = "lib"
+
+
+class MailerSpecAppender(AbstractSpecAppender):
+    component_dir = "mailers"
 
 
 class SpecFile:
