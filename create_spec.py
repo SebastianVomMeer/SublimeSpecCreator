@@ -85,7 +85,7 @@ class ControllerSpecAppender(AbstractSpecAppender):
 
 class SpecFile:
 
-    spec_dir = "specs"
+    spec_dir = "spec"
     file_name_suffix = "_spec"
 
     def __init__(self, project_dir, component_dir, namespace_dir, original_file_name):
