@@ -31,6 +31,8 @@ class SpecAppenderFactory:
             return self.for_appender_type(ControllerSpecAppender, method_name, file_path)
         elif "/app/models/" in file_path:
             return self.for_appender_type(ModelSpecAppender, method_name, file_path)
+        elif "/app/lib/" in file_path:
+            return self.for_appender_type(LibSpecAppender, method_name, file_path)
         else:
             return None
 
@@ -89,6 +91,10 @@ class ControllerSpecAppender(AbstractSpecAppender):
 
 class ModelSpecAppender(AbstractSpecAppender):
     component_dir = "models"
+
+
+class LibSpecAppender(AbstractSpecAppender):
+    component_dir = "lib"
 
 
 class SpecFile:
