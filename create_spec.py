@@ -2,6 +2,8 @@ import sublime, sublime_plugin, os.path, re
 from subprocess import call
 
 class CreateSpecCommand(sublime_plugin.TextCommand):
+
+    invalid_method_names = ["", "def", "self", "self.", "class", "module", "if", "end"]
     
     def run(self, edit):
         view = self.view
@@ -9,11 +11,13 @@ class CreateSpecCommand(sublime_plugin.TextCommand):
         if region.empty():
             view.window().run_command('find_under_expand')
             region = view.sel()[0]
-        method_name = view.substr(view.word(region))
-        if method_name == "":
+        method_name = view.substr(view.word(region)).strip()
+        if method_name in self.invalid_method_names:
+            sublime.status_message("Select a valid method name to create a spec.")
             return
         spec_appender = SpecAppenderFactory().for_method_name_and_file_name(view.substr(region), view.file_name())
         if spec_appender is None:
+            sublime.status_message("Failed to determine appropriate spec file for this type of file.")
             return
         spec_appender.create_file_if_missing()
         spec_appender.append_spec()
