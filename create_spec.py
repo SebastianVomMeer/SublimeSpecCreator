@@ -35,7 +35,7 @@ class SpecAppenderFactory:
         component_dir = ControllerSpecAppender.component_dir
         self.extract_path_components(file_path, component_dir)
         spec_file = SpecFile(self.project_dir, component_dir, self.namespace_dir, self.file_name)
-        return ControllerSpecAppender(method_name, self.file_name, spec_file)
+        return ControllerSpecAppender(method_name, self.file_name, spec_file, self.namespace_dir)
 
     def extract_path_components(self, file_path, component_dir):
         remaining_path, self.file_name = os.path.split(file_path)
@@ -50,10 +50,11 @@ class SpecAppenderFactory:
 
 class AbstractSpecAppender:
 
-    def __init__(self, method_name, file_name, spec_file):
+    def __init__(self, method_name, file_name, spec_file, namespace_dir):
         self.method_name = method_name
         self.file_name = file_name
         self.spec_file = spec_file
+        self.namespace_dir = namespace_dir
 
     def create_file_if_missing(self):
         if not self.spec_file.exists():
@@ -69,18 +70,19 @@ class AbstractSpecAppender:
             return "#" + self.method_name
 
     def subject_description(self):
-        return "Something"
+        name, extenion = os.path.splitext(self.file_name)
+        class_name = self.underscore_to_camelcase(name)
+        if self.namespace_dir != "":
+            class_name = self.underscore_to_camelcase(self.namespace_dir) + "::" + class_name
+        return class_name
+
+    def underscore_to_camelcase(self, word):
+        return ''.join(x.capitalize() or '_' for x in word.split('_'))
 
 
 class ControllerSpecAppender(AbstractSpecAppender):
     component_dir = "controllers"
     
-    def subject_description(self):
-        name, extenion = os.path.splitext(self.file_name)
-        return self.underscore_to_camelcase(name)
-
-    def underscore_to_camelcase(self, word):
-        return ''.join(x.capitalize() or '_' for x in word.split('_'))
 
 
 class SpecFile:
