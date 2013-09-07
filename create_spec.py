@@ -27,19 +27,18 @@ class CreateSpecCommand(sublime_plugin.TextCommand):
 class SpecAppenderFactory:
     
     def for_method_name_and_file_name(self, method_name, file_path):
-        if self.is_controller_method(file_path):
-            return self.for_controller_method(method_name, file_path)
+        if "/app/controllers/" in file_path:
+            return self.for_appender_type(ControllerSpecAppender, method_name, file_path)
+        elif "/app/models/" in file_path:
+            return self.for_appender_type(ModelSpecAppender, method_name, file_path)
         else:
             return None
 
-    def is_controller_method(self, file_path):
-        return "/app/controllers/" in file_path
-
-    def for_controller_method(self, method_name, file_path):
-        component_dir = ControllerSpecAppender.component_dir
+    def for_appender_type(self, appender_type, method_name, file_path):
+        component_dir = appender_type.component_dir
         self.extract_path_components(file_path, component_dir)
         spec_file = SpecFile(self.project_dir, component_dir, self.namespace_dir, self.file_name)
-        return ControllerSpecAppender(method_name, self.file_name, spec_file, self.namespace_dir)
+        return appender_type(method_name, self.file_name, spec_file, self.namespace_dir)
 
     def extract_path_components(self, file_path, component_dir):
         remaining_path, self.file_name = os.path.split(file_path)
@@ -86,7 +85,10 @@ class AbstractSpecAppender:
 
 class ControllerSpecAppender(AbstractSpecAppender):
     component_dir = "controllers"
-    
+
+
+class ModelSpecAppender(AbstractSpecAppender):
+    component_dir = "models"
 
 
 class SpecFile:
