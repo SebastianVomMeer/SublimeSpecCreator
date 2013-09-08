@@ -1,0 +1,6 @@
+[
+	{
+		"caption": "CreateSpec: Create spec for selected method",
+		"command": "create_spec"
+	}
+]
