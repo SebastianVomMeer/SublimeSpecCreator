@@ -7,11 +7,11 @@ Create specs for selected methods with just a keystroke in your Rails/RSpec proj
 Installation/Update
 -------------------
 
-Copy the latest Python file into your Sublime's `Packages/User` directory.
+Clone or pull the latest version into your Sublime's `Packages` directory.
 
 ##### Sublime Text 2, Ubuntu 12.04
 
-    wget https://raw.github.com/SebastianG86/SublimeSpecCreator/master/create_spec.py ~/.config/sublime-text-2/Packages/User/
+    cd ~/.config/sublime-text-2/Packages/ && git clone https://github.com/SebastianG86/SublimeSpecCreator.git
 
 
 Configuration
