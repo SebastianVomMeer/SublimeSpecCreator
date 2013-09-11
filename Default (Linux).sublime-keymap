@@ -1,0 +1,3 @@
+[
+    { "keys": ["super+alt+s"], "command": "create_spec" }
+]
