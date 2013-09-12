@@ -50,6 +50,7 @@ class ActionContextHandler(sublime_plugin.EventListener):
         if spec_region != None:
             view.sel().clear()
             view.sel().add(spec_region)
+            view.show_at_center(spec_region)
             return True
         return False
 
