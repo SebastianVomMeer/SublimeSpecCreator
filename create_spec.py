@@ -1,6 +1,8 @@
 import sublime, sublime_plugin, os.path, re
 from subprocess import call
 
+spec_to_be_highlighted = None
+
 class CreateSpecCommand(sublime_plugin.TextCommand):
 
     invalid_method_names = ["", "def", "self", "self.", "class", "module", "if", "end"]
@@ -21,7 +23,35 @@ class CreateSpecCommand(sublime_plugin.TextCommand):
             return
         spec_appender.create_file_if_missing()
         spec_appender.append_spec()
+
+        global spec_to_be_highlighted
+        spec_to_be_highlighted = spec_appender.spec_description()
+        print "Variable geschrieben"
+        
         new_view = sublime.active_window().open_file(spec_appender.spec_file.file_path())
+
+
+class ActionContextHandler(sublime_plugin.EventListener):
+    
+    def on_load(self, view):
+        self.highlight_spec_if_created(view)
+
+    def on_modified(self, view):
+        self.highlight_spec_if_created(view)
+
+    def highlight_spec_if_created(self, view):
+        global spec_to_be_highlighted
+        if spec_to_be_highlighted != None:
+            if self.highlight_spec(view, spec_to_be_highlighted):
+                spec_to_be_highlighted = None
+
+    def highlight_spec(self, view, spec_description):
+        spec_region = view.find(spec_description, 0)
+        if spec_region != None:
+            view.sel().clear()
+            view.sel().add(spec_region)
+            return True
+        return False
 
 
 class SpecAppenderFactory:
